@@ -1,0 +1,1 @@
+{"dbhost":"intercom.sumar5.net","dbuser":"usuario5","dbpass":"sumar","dbport":"3306","dbname":"sumar","usemysqli":"inactive"}
