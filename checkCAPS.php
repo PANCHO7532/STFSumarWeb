@@ -8,7 +8,7 @@ if(!isset($_POST['caps'])) {
 	die;
 }
 if(!isset($_POST['psw'])) {
-	echo "<title>Invalid Password</title><fieldset><legend>Invalid Password</legend><p>Por favor ingresa la contraseña de una forma correcta.</p></fieldset>";
+	echo "<title>Invalid Password</title><fieldset><legend>Invalid Password</legend><p>Por favor ingresa la contraseï¿½a de una forma correcta.</p></fieldset>";
 	die;
 }
 
@@ -17,12 +17,46 @@ $psw = $_POST['psw'];
 
 //SQL
 include 'inc/config.parse.php';
+include 'inc/db_connect.inc.php';
 if($configinc['usemysqli'] == "active") {
 	$uselessvar = "idk";
+	/*
+	$link = mysqli_connect($configinc['dbhost'].":".$configinc['dbport'], $configinc['dbuser'], $configinc['dbpass']);
+	if(!$link) {
+		echo "<head><title>ERROR</title><fieldset><legend>MySQL ERROR</legend><p>No se puede conectar a la base de datos! Revisa las configuraciones y si el servidor es accesible e intentelo nuevamente</p></fieldset>";
+		die;
+	}
+	mysqli_select_db($link, $configinc['dbname']);
+	$consulta = mysqli_query($link, "SELECT * from users where userid='".$caps."' and password='".$psw."'");
+	if(!$consulta) {
+		echo "<head><title>ERROR</title><fieldset><legend>MySQL ERROR</legend><p>El usuario no existe/Consulta invalida</p></fieldset>";
+		die;
+	}
+	$resultadomysql = mysqli_fetch_array($consulta);
+	if($resultadomysql['userid'] == $caps AND $resultadomysql['password'] == $psw) {
+		setcookie("passport", "1", time()+36000);
+		setcookie("userinfo1", $resultadomysql['userid']." - ".$resultadomysql['username'], time()+36000);
+		header("Location: browser.php");
+	} else {
+		echo "<head><title>ERROR</title><fieldset><legend>Credentials Error</legend><p>El usuario o contraseï¿½a ingresados son incorrectos.</p></fieldset>";
+		die;
+	} 
+	*/
+	$resultadomysql = mysqlireq("SELECT * from users where userid='".$caps."' and password='".$psw."'");
+	if($resultadomysql['userid'] == $caps AND $resultadomysql['password'] == $psw) {
+		setcookie("passport", "1", time()+36000);
+		setcookie("userinfo1", $resultadomysql['userid']." - ".$resultadomysql['username'], time()+36000);
+		header("Location: browser.php");
+	} else {
+		error_reporting(0);
+		echo "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8' /><title>ERROR</title><fieldset><legend>Credentials Error</legend><p>El usuario o contraseÃ±a ingresados son incorrectos.</p></fieldset>";
+		die;
+	} 
 } elseif($configinc['usemysqli'] == "inactive") {
 	//$e = "f";
+	/*
 	$link = mysql_connect($configinc['dbhost'].":".$configinc['dbport'], $configinc['dbuser'], $configinc['dbpass']);
-	if(!link) {
+	if(!$link) {
 		echo "<head><title>ERROR</title><fieldset><legend>MySQL ERROR</legend><p>No se puede conectar a la base de datos! Revisa las configuraciones y si el servidor es accesible e intentelo nuevamente</p></fieldset>";
 		die;
 	}
@@ -35,12 +69,24 @@ if($configinc['usemysqli'] == "active") {
 	$resultadomysql = mysql_fetch_array($consulta);
 	if($resultadomysql['userid'] == $caps AND $resultadomysql['password'] == $psw) {
 		setcookie("passport", "1", time()+36000);
+		setcookie("userinfo1", $resultadomysql['userid']." - ".$resultadomysql['username'], time()+36000);
 		header("Location: browser.php");
 	} else {
-		echo "<head><title>ERROR</title><fieldset><legend>Credentials Error</legend><p>El usuario o contraseña ingresados son incorrectos.</p></fieldset>";
+		echo "<head><title>ERROR</title><fieldset><legend>Credentials Error</legend><p>El usuario o contraseï¿½a ingresados son incorrectos.</p></fieldset>";
+		die;
+	} 
+	*/
+	$resultadomysql = mysqlreq("SELECT * from users where userid='".$caps."' and password='".$psw."'");
+	if($resultadomysql['userid'] == $caps AND $resultadomysql['password'] == $psw) {
+		setcookie("passport", "1", time()+36000);
+		setcookie("userinfo1", $resultadomysql['userid']." - ".$resultadomysql['username'], time()+36000);
+		header("Location: browser.php");
+	} else {
+		error_reporting(0);
+		echo "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8' /><title>ERROR</title><fieldset><legend>Credentials Error</legend><p>El usuario o contraseÃ±a ingresados son incorrectos.</p></fieldset>";
 		die;
 	} 
 } else {
-	echo "<head><title>ERROR</title><fieldset><legend>Malformed Configuration File</legend><p>ERROR: El archivo de configuracion 'config.inc.js' contiene errores que el programa no puede procesar correctamente, corrija el archivo o genere uno nuevo ejecutando 'generate.php' en el navegador.</p></fieldset>";
+	echo "<head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8' /><title>ERROR</title><fieldset><legend>Malformed Configuration File</legend><p>ERROR: El archivo de configuracion 'config.inc.js' contiene errores que el programa no puede procesar correctamente, corrija el archivo o genere uno nuevo ejecutando 'generate.php' en el navegador.</p></fieldset>";
 }
 ?>
